@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
-import { Place } from '../../place.module';
+import { Place } from '../../place.model';
 import { PlacesService } from '../../places.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class EditOfferPage implements OnInit, OnDestroy {
 
   place: Place;
   form: FormGroup;
-  placeId: String;
+  placeId: string;
   isLoading = false;
   private placeSub: Subscription;
 
@@ -38,7 +38,7 @@ export class EditOfferPage implements OnInit, OnDestroy {
       this.placeId = paramMap.get('placeId');
       this.isLoading = true;
       this.placeSub = this.placesService.getPlace(paramMap.get('placeId'))
-        .subscribe(place => {
+        .subscribe((place: any) => {
           this.place = place;
           this.form = new FormGroup({
             title: new FormControl(this.place.title,{
@@ -62,7 +62,7 @@ export class EditOfferPage implements OnInit, OnDestroy {
             }]
           }).then(alertEl =>{
             alertEl.present();
-          })
+          });
         }
       );
     });
@@ -87,8 +87,8 @@ export class EditOfferPage implements OnInit, OnDestroy {
           loadingEl.dismiss();
           this.form.reset();
           this.router.navigate(['/places/tabs/offers']);
-        })
-    })
+        });
+    });
   }
 
   ngOnDestroy() {

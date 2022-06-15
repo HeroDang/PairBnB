@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 
-import { Place } from '../place.module';
+import { Place } from '../place.model';
 import { PlacesService } from '../places.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class DiscoverPage implements OnInit, OnDestroy {
         this.relevantPlaces = this.loadedPlaces;
         this.listLoadedPlaces = place.slice(1);
       }else{
-        this.relevantPlaces = this.loadedPlaces.filter(place => place.id !== this.authService.userId);
+        this.relevantPlaces = this.loadedPlaces.filter(placee=> placee.id !== this.authService.userId);
         this.listLoadedPlaces = this.relevantPlaces.slice(1);
       }
     });
@@ -39,7 +39,7 @@ export class DiscoverPage implements OnInit, OnDestroy {
     this.isLoading = true;
     this.placesService.fetchPlaces().subscribe(() => {
       this.isLoading = false;
-    })
+    });
   }
 
   onFillterUpdate(event: CustomEvent<SegmentChangeEventDetail>){

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
-import { Place } from '../../place.module';
+import { Place } from '../../place.model';
 import { PlacesService } from '../../places.service';
 
 @Component({
@@ -28,16 +28,16 @@ export class OfferBookingsPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
-      this.placeSub = this.placesService.getPlace(paraMap.get('placeId')).subscribe(place => {
-        // console.log(place.id);
+      this.placeSub = this.placesService.getPlace(paraMap.get('placeId')).subscribe((place: any) => {
         this.place = place;
+        // console.log(place.id);
         // console.log(this.place.id);
       });
     });
   }
 
   onNav(){
-    this.router.navigate(['/', 'places','tabs','offers','edit',this.place.id])
+    this.router.navigate(['/', 'places','tabs','offers','edit',this.place.id]);
   }
 
   ngOnDestroy() {

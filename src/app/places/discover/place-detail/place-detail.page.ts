@@ -1,13 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
-import { Place } from '../../place.module';
+import { Place } from '../../place.model';
 import { PlacesService } from '../../places.service';
 import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
 import { BookingService } from '../../../bookings/booking.service';
 import { AuthService } from '../../../auth/auth.service';
+import { PlaceLocation } from '../../location.model';
+
 
 @Component({
   selector: 'app-place-detail',
@@ -40,10 +42,12 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         return;
       }
       this.isLoading = true;
-      this.placeSub = this.placesService.getPlace(paramMap.get('placeId')).subscribe(place => {
-        this.place = place;
-        this.isBookable = place.userId !== this.authService.userId;
+      this.placeSub = this.placesService.getPlace(paramMap.get('placeId')).subscribe((placee: any) => {
+        this.place = placee;
+        // this.isBookable = false;
+        this.isBookable = placee.userId !== this.authService.userId;
         this.isLoading = false;
+        console.log('1');
       },
       error => {
         this.alertCtrl.create({
@@ -61,7 +65,7 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
           alertEl.present();
         });
       }
-      )
+      );
     });
   }
 

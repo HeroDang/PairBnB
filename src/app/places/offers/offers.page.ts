@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { IonItemSliding, MenuController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
-import { Place } from '../place.module';
+import { Place } from '../place.model';
 import { PlacesService } from '../places.service';
 
 @Component({
@@ -15,13 +15,13 @@ export class OffersPage implements OnInit, OnDestroy {
 
   offers: Place[];
   isLoading = false;
-  private placesSub: Subscription
+  private placesSub: Subscription;
   constructor(private placesService: PlacesService, private route: Router) { }
 
   ngOnInit() {
     this.placesSub =  this.placesService.places.subscribe(places => {
       this.offers = places;
-    })
+    });
   }
 
   ionViewWillEnter(){

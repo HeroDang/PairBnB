@@ -3,7 +3,7 @@ import {format, parseISO} from 'date-fns';
 import { ModalController } from '@ionic/angular';
 import { NgForm } from '@angular/forms';
 
-import { Place } from '../../places/place.module';
+import { Place } from '../../places/place.model';
 
 @Component({
   selector: 'app-create-booking',
@@ -14,8 +14,8 @@ export class CreateBookingComponent implements OnInit {
   @Input() selectedPlace: Place;
   @Input() selectedMode: 'select' | 'random';
   @ViewChild('f') form: NgForm;
-  startDate: string = '';
-  endDate: string = '';
+  startDate: string;
+  endDate: string;
 
   constructor(private modalCtrl: ModalController) { }
   ngOnInit() {
