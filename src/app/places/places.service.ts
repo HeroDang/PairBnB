@@ -116,21 +116,26 @@ export class PlacesService {
 
   addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date){
     let generatedId: string;
-    const newPlace = new Place(
-      Math.random().toString(),
-      title,
-      description,
-      'https://img.nhandan.com.vn/Files/Images/2021/03/23/40692162_9381807_image_a_23_1616-1616460198504.jpg',
-      price,
-      dateFrom,
-      dateTo,
-      this.authService.userId
-    );
-    return this.http.post<{name: string}>('https://ionic-angular-course-76840-default-rtdb.asia-southeast1.firebasedatabase.app/offered-places.json',{
-      ...newPlace,
-      id: null
-    })
-    .pipe(
+    let newPlace: Place;
+    return this.authService.userId.pipe(take(1),switchMap(userId =>{
+      if(!userId){
+        throw new Error('No user found');
+      }
+      newPlace = new Place(
+        Math.random().toString(),
+        title,
+        description,
+        'https://img.nhandan.com.vn/Files/Images/2021/03/23/40692162_9381807_image_a_23_1616-1616460198504.jpg',
+        price,
+        dateFrom,
+        dateTo,
+        userId
+      );
+      return this.http.post<{name: string}>('https://ionic-angular-course-76840-default-rtdb.asia-southeast1.firebasedatabase.app/offered-places.json',{
+        ...newPlace,
+        id: null
+      })
+    }),
       switchMap(resData => {
         generatedId = resData.name;
         return this.places;

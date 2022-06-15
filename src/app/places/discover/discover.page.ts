@@ -28,10 +28,11 @@ export class DiscoverPage implements OnInit, OnDestroy {
       if(this.chosenFilter === 'all'){
         this.relevantPlaces = this.loadedPlaces;
         this.listLoadedPlaces = place.slice(1);
-      }else{
-        this.relevantPlaces = this.loadedPlaces.filter(place => place.id !== this.authService.userId);
-        this.listLoadedPlaces = this.relevantPlaces.slice(1);
       }
+      // else{
+      //   this.relevantPlaces = this.loadedPlaces.filter(place => place.id !== this.authService.userId);
+      //   this.listLoadedPlaces = this.relevantPlaces.slice(1);
+      // }
     });
   }
 
@@ -43,17 +44,19 @@ export class DiscoverPage implements OnInit, OnDestroy {
   }
 
   onFillterUpdate(event: CustomEvent<SegmentChangeEventDetail>){
+    this.authService.userId.pipe(take(1)).subscribe(userId => {
       if(event.detail.value === 'all'){
         this.relevantPlaces = this.loadedPlaces;
         this.listLoadedPlaces = this.relevantPlaces.slice(1);
         this.chosenFilter = 'all';
       }else{
         this.relevantPlaces = this.loadedPlaces.filter(
-          place => place.userId !== this.authService.userId
+          place => place.userId !== userId
         );
         this.listLoadedPlaces = this.relevantPlaces.slice(1);
         this.chosenFilter = 'bookable';
       }
+    })
   }
 
   ngOnDestroy() {
