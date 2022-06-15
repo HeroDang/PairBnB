@@ -1,14 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
-import { Place } from '../../place.module';
+import { Place } from '../../place.model';
 import { PlacesService } from '../../places.service';
 import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
 import { BookingService } from '../../../bookings/booking.service';
 import { AuthService } from '../../../auth/auth.service';
-import { switchMap } from 'rxjs/operators';
+import { PlaceLocation } from '../../location.model';
+
 
 @Component({
   selector: 'app-place-detail',
@@ -52,7 +54,7 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
             return this.placesService.getPlace(paramMap.get('placeId'));
           })
         )
-        .subscribe(place => {
+        .subscribe((place:any) => {
           this.place = place;
           this.isBookable = place.userId !== fetchedUserId;
           this.isLoading = false;

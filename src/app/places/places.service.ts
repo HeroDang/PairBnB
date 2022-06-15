@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Place } from './place.module';
+import { Place } from './place.model';
 import { BehaviorSubject, of } from 'rxjs';
 import { take, map , tap, delay, switchMap} from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
+import { PlaceLocation } from './location.model';
 
 // new Place(
 //   'p1',
@@ -47,6 +48,7 @@ interface PlaceData{
   price: number;
   title: string;
   userId: string;
+  location: PlaceLocation;
 }
 
 @Injectable({
@@ -63,7 +65,8 @@ export class PlacesService {
 
   fetchPlaces(){
     return this.http
-      .get<{[key:string]: PlaceData}>('https://ionic-angular-course-76840-default-rtdb.asia-southeast1.firebasedatabase.app/offered-places.json')
+      .get<{[key: string]: PlaceData}>(
+        'https://ionic-angular-course-76840-default-rtdb.asia-southeast1.firebasedatabase.app/offered-places.json')
       .pipe(
         map(resData => {
           const places = [];
@@ -78,15 +81,17 @@ export class PlacesService {
                   resData[key].price,
                   new Date(resData[key].availableFrom),
                   new Date(resData[key].availableTo),
-                  resData[key].userId
+                  resData[key].userId,
+                  resData[key].location
                 )
-              )
+              );
             }
           }
           return places;
           // return [];
         }),
         tap(places => {
+    // eslint-disable-next-line no-underscore-dangle
           this._place.next(places);
         })
       );
@@ -100,21 +105,30 @@ export class PlacesService {
       )
       .pipe(
         map(placeData => {
-          return new Place(
-            id,
-            placeData.title,
-            placeData.description,
-            placeData.imageUrl,
-            placeData.price,
-            new Date(placeData.availableFrom),
-            new Date(placeData.availableTo),
-            placeData.userId
-          );
-        })
+            new Place(
+              id,
+              placeData.title,
+              placeData.description,
+              placeData.imageUrl,
+              placeData.price,
+              new Date(placeData.availableFrom),
+              new Date(placeData.availableTo),
+              placeData.userId,
+              placeData.location
+            );
+          }
+        )
       );
   }
 
-  addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date){
+  addPlace(
+    title: string,
+    description: string,
+    price: number,
+    dateFrom: Date,
+    dateTo: Date,
+    location: PlaceLocation
+    ) {
     let generatedId: string;
     let newPlace: Place;
     return this.authService.userId.pipe(take(1),switchMap(userId =>{
@@ -129,7 +143,8 @@ export class PlacesService {
         price,
         dateFrom,
         dateTo,
-        userId
+        userId,
+        location
       );
       return this.http.post<{name: string}>('https://ionic-angular-course-76840-default-rtdb.asia-southeast1.firebasedatabase.app/offered-places.json',{
         ...newPlace,
@@ -143,8 +158,9 @@ export class PlacesService {
       take(1),
       tap(places => {
         newPlace.id = generatedId;
+    // eslint-disable-next-line no-underscore-dangle
         this._place.next(places.concat(newPlace));
-    }))
+    }));
     // return this.places.pipe(
     //   take(1),
     //   delay(1000),
@@ -177,7 +193,8 @@ export class PlacesService {
           oldPlace.price,
           oldPlace.availableFrom,
           oldPlace.availableTo,
-          oldPlace.userId
+          oldPlace.userId,
+          oldPlace.location
         );
         return this.http.put(
           `https://ionic-angular-course-76840-default-rtdb.asia-southeast1.firebasedatabase.app/offered-places/${placeId}.json`,
@@ -185,8 +202,9 @@ export class PlacesService {
         );
       }),
       tap(() => {
+    // eslint-disable-next-line no-underscore-dangle
         this._place.next(updatePlases);
       })
-    )
+    );
   }
 }
